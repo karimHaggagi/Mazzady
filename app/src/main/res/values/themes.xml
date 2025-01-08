@@ -1,0 +1,30 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.MazadyTask" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.MazadyTask" parent="Base.Theme.MazadyTask" />
+
+
+    <style name="RoundedSquare">
+        <item name="cornerSize">24%</item>
+    </style>
+    <style name="circle">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CustomBottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconSize">24dp</item>
+        <item name="itemTextAppearanceActive">@style/CustomTextAppearance</item>
+        <item name="itemTextAppearanceInactive">@style/CustomTextAppearance</item>
+        <item name="elevation">0dp</item> <!-- Remove shadow space if not needed -->
+    </style>
+
+    <style name="CustomTextAppearance" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+
+</resources>

@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">MazadyTask</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="loading">Loading</string>
+    <string name="other">Other</string>
+    <string name="select_one">Select One</string>
+    <string name="main_category">Main Category</string>
+    <string name="sub_category">Sub Category</string>
+    <string name="specify">Specify here</string>
+
+    <!-- Data Errors -->
+    <string name="data_error_local_disk_full">Disk full</string>
+    <string name="data_error_local_unknown">Unknown local error</string>
+    <string name="data_error_remote_request_timeout">Request timeout</string>
+    <string name="data_error_remote_too_many_requests">Too many requests</string>
+    <string name="data_error_remote_no_internet">No internet connection</string>
+    <string name="data_error_remote_server_error">Server error</string>
+    <string name="data_error_remote_serialization_error">Serialization error</string>
+    <string name="data_error_remote_unknown_error">Unknown remote error</string>
+    <string name="submit">Submit</string>
+    <string name="summary">Summary</string>
+    <string name="done">Done</string>
+    <string name="hallo_user">Hallo, Samuel!</string>
+    <string name="points">Points</string>
+    <string name="upcoming">Upcoming&#160;</string>
+    <string name="course_of_this_week">course of this week</string>
+    <string name="free_e_book">Free e-book</string>
+
+</resources>
