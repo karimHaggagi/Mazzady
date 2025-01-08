@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import app.cash.turbine.test
 import com.example.mazadytask.FakeStringProvider
+import com.example.mazadytask.MainDispatcherRule
 import com.example.mazadytask.category.data.dto.CategoriesDto
 import com.example.mazadytask.category.domain.model.CategoryModel
 import com.example.mazadytask.category.domain.model.ChildrenModel
@@ -15,12 +16,17 @@ import com.example.mazadytask.core.domain.toUiText
 import com.example.mazadytask.core.presentation.AndroidStringProvider
 import com.example.mazadytask.core.presentation.UiText
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyInt
@@ -41,19 +47,18 @@ class CategoriesViewModelTest {
     @Mock
     private lateinit var categoriesRepository: CategoriesRepository
 
-    private val testDispatcher = StandardTestDispatcher()
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(testDispatcher) // Override Main dispatcher with test dispatcher
+        SUT = CategoriesViewModel(categoriesRepository, FakeStringProvider())
     }
 
     @Test
     fun getAllCategories_return_success() = runTest {
         successGetAllCategories()
-        SUT = CategoriesViewModel(categoriesRepository, FakeStringProvider())
         SUT.categoriesFlow.test {
-            awaitItem()
             val result = awaitItem()
             assertEquals(result, mockCategoryList)
         }
@@ -62,16 +67,39 @@ class CategoriesViewModelTest {
     @Test
     fun getAllCategories_serverIsDown_returnRemoteServerError() = runTest {
         failGetAllCategories()
-        SUT = CategoriesViewModel(categoriesRepository, FakeStringProvider())
-        SUT.getAllCategories()
+        // Launch categoriesFlow to trigger the initial load
+        launch {
+            SUT.categoriesFlow.test {
+                awaitItem() // This will fail due to error
+
+            }
+        }
         SUT.errorState.test {
             val result = awaitItem()
             assert(result is UiText.StringResourceId)
         }
     }
 
+    @Test
+    fun selectMainCategory_returnSubCategoryList() = runTest {
+        successGetAllCategories()
+        // Collect both flows in parallel to ensure we capture all emissions
+        runBlocking {
+            SUT.categoriesFlow.test {
+                awaitItem()
+                SUT.setSelectedCategory(0)
+            }
+        }
+
+        // Test the subcategory flow
+        SUT.subCategoryFlow.test {
+            val result = awaitItem() // Updated value after selection
+            assertEquals(mockCategoryList[0].children, result)
+        }
+    }
+
     private suspend fun successGetAllCategories() {
-        lenient().whenever(categoriesRepository.getAllRepositories())
+        whenever(categoriesRepository.getAllRepositories())
             .thenReturn(
                 Result.Success(
                     mockCategoryList
